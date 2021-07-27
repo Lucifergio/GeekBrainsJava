@@ -66,7 +66,7 @@ public class HomeWorkApp2 {
     }
 }
 
-     /*  Не понимаю почему, но IDEA ругается на такой метод и предлагает сделать void.
+     /*  Не понимаю почему, но IDEA ругается на такой метод и предлагает сделать void. Прошу помощи.
       public static boolean leapYear(int a) {
         if ((a % 4) == 0) {
             if ((a % 400) == 0 || (a % 100) != 0) {
@@ -77,4 +77,3 @@ public class HomeWorkApp2 {
     }
 }
      */
-
