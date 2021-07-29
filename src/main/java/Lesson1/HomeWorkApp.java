@@ -13,6 +13,7 @@ public class HomeWorkApp {
         compareNumbers();
         System.out.println("#################");
 
+
     }
     // Пункт 2
     public static void printThreeWords () {
