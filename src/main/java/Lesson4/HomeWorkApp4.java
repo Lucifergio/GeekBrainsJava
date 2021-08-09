@@ -12,12 +12,11 @@ public class HomeWorkApp4 {
     /**
      * Размер карты
      */
-    public static final int SIZE = 5;
+    public static final int SIZE = 3;
     /**
      * Сколько точек нужно для победы
      */
-    public static final int DOTS_TO_WIN = 4;
-
+    public static final int DOTS_TO_WIN = 3;
     /**
      * Пустая ячейка
      */
@@ -34,23 +33,29 @@ public class HomeWorkApp4 {
     public static void main(String[] args) {
         initMap();
         printMap();
+
         while (true) {
+
             humanTurn();
             printMap();
-            if (checkWin(DOT_X)) {
+
+            if (checkWin() == 1) {
                 System.out.println("Выйграл человек");
                 break;
             }
+
             if (isMapFull()) {
                 System.out.println("Ничья");
                 break;
             }
-           // aiTurn();
+            aiTurn();
             printMap();
-            if (checkWin(DOT_O)) {
+
+            if (checkWin() == 0) {
                 System.out.println("ИИ выйгал");
                 break;
             }
+
             if (isMapFull()) {
                 System.out.println("Ничья");
                 break;
@@ -58,12 +63,13 @@ public class HomeWorkApp4 {
         }
 
     }
-
     /**
      * Инициализируем карту
      */
     public static void initMap() {
+
         map = new char[SIZE][SIZE];
+
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
                 map[i][j] = DOT_EMPTY;
@@ -71,18 +77,21 @@ public class HomeWorkApp4 {
         }
 
     }
-
     /**
      * Печатает поле на экран
      */
     public static void printMap() {
-        //Верхние координаты
+
+        //Столбцы
+
         for (int i = 0; i <= SIZE; i++) {
             System.out.print(i + " ");
         }
         System.out.println();
         for (int i = 0; i < SIZE; i++) {
-            //Левые координаты
+
+            //Строки
+
             System.out.print((i + 1) + " ");
             for (int j = 0; j < SIZE; j++) {
                 System.out.print(map[i][j] + " ");
@@ -90,7 +99,6 @@ public class HomeWorkApp4 {
             System.out.println();
         }
     }
-
     /**
      * Ход человека
      */
@@ -108,12 +116,16 @@ public class HomeWorkApp4 {
     /**
      * Валидная ли ячейка
      */
+
     public static boolean isCellValid(int x, int y) {
+
         //Проверим, что попали в массив
+
         if (x < 0 || x >= SIZE || y < 0 || y >= SIZE) {
             return false;
         }
         //Проверим, что ячейка подходит
+
         if (map[x][y] == DOT_EMPTY) {
             return true;
         } else {
@@ -124,6 +136,7 @@ public class HomeWorkApp4 {
     /**
      * Ход ПК
      */
+
     public static void aiTurn() {
         int x;
         int y;
@@ -138,11 +151,10 @@ public class HomeWorkApp4 {
 
     /**
      * Проверяет выйгрыш.
-     *
-     * @param sym для проверки победы
+     * return "Win_X" или Win_0
      */
 
-    public static boolean checkWin(char sym) {
+    public static int checkWin() {
 
         int checkCross = 0;
         int checkZero = 0;
@@ -153,8 +165,6 @@ public class HomeWorkApp4 {
 
            for (int j = 0; j < SIZE; j++) {
 
-               if (map[i][j] == sym && map[i][j] != DOT_EMPTY) {
-
                    if (map[i][j] == DOT_X) {
                        checkCross++;
                    }
@@ -162,9 +172,8 @@ public class HomeWorkApp4 {
                    else if (map[i][j] == DOT_O) {
                        checkZero++;
                    }
-               }
 
-               else if (map[i][j] == DOT_EMPTY) {
+                   else if (map[i][j] == DOT_EMPTY) {
                    checkCross = 0;
                    checkZero = 0;
                    continue;
@@ -172,11 +181,11 @@ public class HomeWorkApp4 {
            }
 
             if (checkCross  == DOTS_TO_WIN) {
-                return true;
+                return 1;
             }
 
             if (checkZero == DOTS_TO_WIN) {
-                return true;
+                return 0;
             }
 
             checkCross = 0;
@@ -189,8 +198,6 @@ public class HomeWorkApp4 {
 
             for (int j = 0; j < SIZE; j++) {
 
-                if (map[j][i] == sym && map[j][i] != DOT_EMPTY) {
-
                     if (map[j][i] == DOT_X) {
                         checkCross++;
                     }
@@ -198,20 +205,20 @@ public class HomeWorkApp4 {
                     else if (map[j][i] == DOT_O) {
                         checkZero++;
                     }
-                }
-                else {
-                    checkCross = 0;
-                    checkZero = 0;
-                    break;
-                }
+
+                    else {
+                        checkCross = 0;
+                        checkZero = 0;
+                        break;
+                     }
             }
 
             if (checkCross  == DOTS_TO_WIN) {
-                return true;
+                return 1;
             }
 
             if (checkZero == DOTS_TO_WIN) {
-                return true;
+                return 0;
             }
 
             checkCross = 0;
@@ -220,57 +227,47 @@ public class HomeWorkApp4 {
 
         //Диагонали
 
-        // Диагональ слева направо
+        int counter = 0;
 
-        //int checkNumDiag = 0;
-        int counter1 = 0;
+        // Диагональ слева направо
 
         for (int i = 0; i < SIZE; i++) {
 
-            if (counter1 > 1) {
-                return false;
+            if (counter >= SIZE-1) {
+                checkCross = 0;
+                checkZero = 0;
+                break;
             }
 
             for (int j = 0; j < SIZE; j++) {
 
-                if (i == j && map[i][j] == sym && map[i][j] != DOT_EMPTY) {
+                if (i == j) {
 
                     if (map[i][j] == DOT_X) {
                         checkCross++;
+                        break;
                     }
 
                     else if (map[i][j] == DOT_O) {
                         checkZero++;
+                        break;
                     }
 
-                    //checkNumDiag += 1;
-                    counter1++;
-                }
-                else if (map[i][j] == DOT_EMPTY) {
-
-                    if (i == j && map[i][j] == DOT_EMPTY ) {
-
-                        //checkNumDiag1 -= 1;
-                        checkCross -= 1 ;
-                        checkZero -= 1;
-                        counter1 = 0;
+                    else if (map[i][j] == DOT_EMPTY) {
+                        counter++;
                         continue;
                     }
 
-                    else {
-                        counter1 = 0;
-                        continue;
-                    }
                 }
 
             }
 
             if (checkCross  == DOTS_TO_WIN) {
-                return true;
+                return 1;
             }
 
             if (checkZero == DOTS_TO_WIN) {
-                return true;
+                return 0;
             }
 
         }
@@ -279,62 +276,48 @@ public class HomeWorkApp4 {
 
         //Диагональ справа налево
 
-        int counter2 = 0;
-
         for (int i = SIZE-1; i >= 0; i--) {
+
+            if (counter >= SIZE-1) {
+                checkCross = 0;
+                checkZero = 0;
+                break;
+            }
 
             for (int j = 0; j < SIZE; j++) {
 
-                if (map[i][j] == sym && map[i][j] != DOT_EMPTY) {
-
-                    if (map[i][j] == DOT_X) {
-
-                        if (counter2 >= (SIZE - 1) && checkCross != 0) {
-                            checkCross -= 1;
-                            counter2 = 0;
-                        }
-                        else {
-                            checkCross++;
-                            counter2 += (SIZE-1) - j;
-                            break;
-                        }
+                if (map[i][j] == DOT_X) {
+                        checkCross++;
+                        break;
                     }
 
                     else if (map[i][j] == DOT_O) {
 
-                        if (counter2 >= (SIZE - 1) && checkZero != 0) {
-                            checkZero -= 1;
-                        }
-                        else {
                             checkZero++;
                             break;
-                        }
                     }
-                }
-                else if (map[i][j] == DOT_EMPTY) {
 
-                    counter2++;
-
-                    if (counter2 >= SIZE-1) {
-                        checkCross -= 1;
-                        checkZero -= 1;
-                    }
+                    else if (map[i][j] == DOT_EMPTY) {
+                    counter++;
+                    continue;
                 }
+
             }
 
             if (checkCross  == DOTS_TO_WIN) {
-                return true;
+                return 1;
             }
 
             if (checkZero == DOTS_TO_WIN) {
-                return true;
+                return 0;
             }
 
         }
         checkCross = 0;
         checkZero = 0;
+        counter = 0;
 
-        return false;
+        return 3;
     }
 
 
