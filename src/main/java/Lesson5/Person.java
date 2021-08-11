@@ -46,6 +46,13 @@ public class Person {
                 5000,
                 55);
 
+
+        checkAgeOver40(staffArray);
+
+    }
+
+    public static void checkAgeOver40 (Staff[] staffArray) {
+
         for (int i = 0; i < staffArray.length; i++) {
             if (staffArray[i].getAge() > 40) {
                 staffArray[i].getInfo();
