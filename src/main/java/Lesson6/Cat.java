@@ -13,9 +13,6 @@ public class Cat extends Animals{
         checkResultSwim(catArray());
         System.out.println();
         counterAnimals();
-
-
-
     }
 
 
@@ -26,7 +23,6 @@ public class Cat extends Animals{
         catArray[0] = new Animals(150,1,"Барсик");
         catArray[1] = new Animals(201,0,"Рыжик");
         return catArray;
-
     }
 
     public static void checkResultRun (Animals[] catArray) {
@@ -49,9 +45,4 @@ public class Cat extends Animals{
         Animals[] countArray = catArray();
         return countArray.length;
     }
-
-
-
-
-
 }

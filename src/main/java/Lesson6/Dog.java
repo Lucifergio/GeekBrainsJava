@@ -13,9 +13,6 @@ public class Dog extends Animals {
         checkResultSwim(dogArray());
         System.out.println();
         counterAnimals();
-
-
-
     }
 
     public static Animals[] dogArray () {

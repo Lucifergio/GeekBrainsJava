@@ -7,6 +7,7 @@ public class Animals {
     protected int distSwim;
 
     public Animals(int distRun, int distSwim, String name) {
+
         this.name = name;
         this.distRun = distRun;
         this.distSwim = distSwim;
@@ -30,9 +31,12 @@ public class Animals {
 
             if (distRun > 0 && distRun <= maxRun) {
                 System.out.println(name + " пробежал " + distRun + "м");
-            } else if (distRun > maxRun) {
+            }
+
+            else if (distRun > maxRun) {
                 System.out.println(name + " не может столько пробежать, максимум " + maxRun + "м");
             }
+
             else {
                 System.out.println("Число должно быть положительным.");
             }
@@ -57,7 +61,6 @@ public class Animals {
         }
 
         else {
-
             System.out.println("Число должно быть положительным.");
         }
     }
@@ -67,7 +70,4 @@ public class Animals {
         System.out.println("Количество кошек: " + Cat.counterCat());
         System.out.println("Общее количество животных: " + (Dog.counterDog() + Cat.counterCat()));
     }
-
-
-
 }
