@@ -27,19 +27,18 @@ public class Dog extends Animals {
 
         final int maxRun = 500;
 
-        dogArray[0].printRunDist(dogArray[0].getDistRun(), dogArray[0].getName(), maxRun);
-        dogArray[1].printRunDist(dogArray[1].getDistRun(), dogArray[1].getName(), maxRun);
-        dogArray[2].printRunDist(dogArray[2].getDistRun(), dogArray[2].getName(), maxRun);
+        for (int i = 0; i < dogArray.length; i++) {
+            dogArray[i].printRunDist(dogArray[i].getDistRun(), dogArray[i].getName(), maxRun);
+        }
     }
 
     public static void checkResultSwim (Animals[] dogArray) {
 
         final int maxSwim = 10;
 
-        dogArray[0].printSwimDist(dogArray[0].getDistSwim(), dogArray[0].getName(), maxSwim);
-        dogArray[1].printSwimDist(dogArray[1].getDistSwim(), dogArray[1].getName(), maxSwim);
-        dogArray[2].printSwimDist(dogArray[2].getDistSwim(), dogArray[2].getName(), maxSwim);
-
+        for (int i = 0; i < dogArray.length; i++) {
+            dogArray[i].printSwimDist(dogArray[i].getDistSwim(), dogArray[i].getName(), maxSwim);
+        }
     }
 
     public static int counterDog () {

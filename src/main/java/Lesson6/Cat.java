@@ -29,16 +29,19 @@ public class Cat extends Animals{
 
         final int maxRun = 200;
 
-        catArray[0].printRunDist(catArray[0].getDistRun(), catArray[0].getName(), maxRun);
-        catArray[1].printRunDist(catArray[1].getDistRun(), catArray[1].getName(), maxRun);
+        for (int i = 0; i < catArray.length; i++) {
+            catArray[i].printRunDist(catArray[i].getDistRun(), catArray[i].getName(), maxRun);
+
+        }
     }
 
     public static void checkResultSwim (Animals[] catArray) {
 
         final int maxSwim = 0;
 
-        catArray[0].printSwimDist(catArray[0].getDistSwim(), catArray[0].getName(), maxSwim);
-        catArray[1].printSwimDist(catArray[1].getDistSwim(), catArray[1].getName(), maxSwim);
+        for (int i = 0; i < catArray.length; i++) {
+            catArray[i].printSwimDist(catArray[i].getDistSwim(), catArray[i].getName(), maxSwim);
+        }
     }
 
     public static int counterCat () {

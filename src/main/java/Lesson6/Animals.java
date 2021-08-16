@@ -13,7 +13,6 @@ public class Animals {
         this.distSwim = distSwim;
     }
 
-
     public int getDistRun (){return distRun;} {
     }
 
