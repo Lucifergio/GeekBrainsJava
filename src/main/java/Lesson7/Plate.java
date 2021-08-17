@@ -40,4 +40,5 @@ public class Plate {
     public String toString() {
         return "Количество еды в миске = " + amountOfFood;
     }
+
 }

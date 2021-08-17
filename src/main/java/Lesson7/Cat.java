@@ -58,4 +58,5 @@ public class Cat {
     public String toString() {
         return "Кот " + name + ", голоден на: " + appetite + " пунктов.";
     }
+
 }

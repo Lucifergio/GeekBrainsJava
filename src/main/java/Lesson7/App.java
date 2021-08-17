@@ -23,4 +23,5 @@ public class App {
         plate.fillPlate(100);
 
     }
+
 }
