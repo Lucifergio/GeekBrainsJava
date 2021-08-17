@@ -69,5 +69,4 @@ public class Animals {
         System.out.println("Количество кошек: " + Cat.counterCat());
         System.out.println("Общее количество животных: " + (Dog.counterDog() + Cat.counterCat()));
     }
-
 }
