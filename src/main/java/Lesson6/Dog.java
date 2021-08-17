@@ -45,4 +45,5 @@ public class Dog extends Animals {
         Animals[] countArray = dogArray();
         return countArray.length;
     }
+
 }
