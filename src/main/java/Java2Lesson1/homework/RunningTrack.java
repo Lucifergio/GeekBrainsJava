@@ -1,21 +1,10 @@
 package Java2Lesson1.homework;
 
-public class RunningTrack {
+//Класс "Беговая дорожка".
+public class RunningTrack implements Obstacles{
 
-    public void ranOnTheRunningTrack(String name) {
-
-        while (true) {
-
-            int rand = (int) (Math.random() * 10);
-
-            if (rand <= 5) {
-                System.out.println(name + " пробежал по беговой дорожке.");
-                break;
-            } else {
-                System.out.println(name + " упал с беговой дорожки");
-                break;
-            }
-
-        }
+    @Override
+    public String getType() {
+        return "беговая дорожка";
     }
 }

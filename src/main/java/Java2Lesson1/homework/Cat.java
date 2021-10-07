@@ -1,15 +1,29 @@
 package Java2Lesson1.homework;
 
+//Класс кошки.
 public class Cat implements Action{
+
+    protected String name;
+
+    public Cat(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
 
     @Override
     public void run() {
-        System.out.println("Кошка, побежала.");
+
+        System.out.println(name +" побежала.");
     }
 
     @Override
     public void jump() {
-        System.out.println("Кошка, прыгнула.");
+
+        System.out.println(name + " прыгнула.");
     }
 
 }

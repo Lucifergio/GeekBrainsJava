@@ -1,4 +1,10 @@
 package Java2Lesson1.homework;
 
-public class Wall {
+//Класс "Стена".
+public class Wall implements Obstacles {
+
+    @Override
+    public String getType() {
+        return "стена";
+    }
 }
