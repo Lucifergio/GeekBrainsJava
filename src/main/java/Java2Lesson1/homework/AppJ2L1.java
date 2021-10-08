@@ -24,26 +24,23 @@ public class AppJ2L1 {
     //Метод прохождения препятствий.
     public static void goObstacles (Action[] participants, Obstacles[] obstaclesTrack) {
 
+        label1: // Метка 2, используем при выбывании.
         for (Action obj : participants) {
+            label2: // Метка 1, используем в случае успешного прохождения препятствия.
             for (Obstacles obst : obstaclesTrack) {
 
                 if (obst.getType().equals("беговая дорожка")) {
                     obj.run();
-                    if (obj.goObstaclesInterface(obst.getVar(), obj.getName(), obst.getType()) == 1) { // Вызов метода и проверка на выбывание.
-                        continue; //Не выбыл.
-                    }
-                    else {
-                        break; //Выбыл
-                    }
                 }
-                else if (obst.getType().equals("стена")){
+
+                else if (obst.getType().equals("стена")) {
                     obj.jump();
-                    if (obj.goObstaclesInterface(obst.getVar(), obj.getName(), obst.getType()) == 1) { // Вызов метода и проверка на выбывание.
-                        continue; //Не выбыл.
-                    }
-                    else {
-                        break;
-                    }
+                }
+                switch (obj.goObstaclesInterface(obst.getVar(), obj.getName(), obst.getType())) {// Вызов метода и проверка на выбывание.
+                    case 1: // Успешно
+                        continue label2;
+                    case 2: // Выбыл.
+                        continue label1;
                 }
 
             }
