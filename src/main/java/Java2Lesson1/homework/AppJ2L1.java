@@ -29,13 +29,21 @@ public class AppJ2L1 {
 
                 if (obst.getType().equals("беговая дорожка")) {
                     obj.run();
-                    obj.goObstaclesInterface(obst.getVar(), obj.getName(), obst.getType());
-                    continue;
+                    if (obj.goObstaclesInterface(obst.getVar(), obj.getName(), obst.getType()) == 1) { // Вызов метода и проверка на выбывание.
+                        continue; //Не выбыл.
+                    }
+                    else {
+                        break; //Выбыл
+                    }
                 }
                 else if (obst.getType().equals("стена")){
                     obj.jump();
-                    obj.goObstaclesInterface(obst.getVar(), obj.getName(), obst.getType());
-                    continue;
+                    if (obj.goObstaclesInterface(obst.getVar(), obj.getName(), obst.getType()) == 1) { // Вызов метода и проверка на выбывание.
+                        continue; //Не выбыл.
+                    }
+                    else {
+                        break;
+                    }
                 }
 
             }

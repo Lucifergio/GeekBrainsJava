@@ -17,13 +17,13 @@ public class Cat implements Action{
     @Override
     public void run() {
 
-        System.out.println(name +" побежала.");
+        System.out.println(name +" побежал.");
     }
 
     @Override
     public void jump() {
 
-        System.out.println(name + " прыгнула.");
+        System.out.println(name + " прыгнул.");
     }
 
 }
