@@ -13,6 +13,7 @@ public class Window extends JFrame{
         setBounds(500, 500, 1000, 700);
         setTitle("Online chat");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
         setLayout(null);
 
 //Поле переписки
