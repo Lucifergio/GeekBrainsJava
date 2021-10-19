@@ -1,12 +1,15 @@
 package Java2Lesson4;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class Window extends JFrame{
 
     private final static String newLine = "\n";
+    Font font = new Font("Italic", Font.ITALIC, 24);
+    Font font2 = new Font("Italic", Font.ITALIC, 14);
 
     public Window() {
 
@@ -21,20 +24,24 @@ public class Window extends JFrame{
         JTextArea txtField = new JTextArea();
         txtField.setBounds(20, 20, 960, 500);
         txtField.setEditable(false);
+        txtField.setFont(font);
         add(txtField);
 
 //Поле ввода сообщения
 
         JTextField txtSendField = new JTextField();
         txtSendField.setBounds(20, 550, 820, 100);
+        txtSendField.setFont(font2);
         add(txtSendField);
 
         txtSendField.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int a = 0;
-                if (txtSendField.getText() != null) {
-                    txtField.append(txtSendField.getText() + newLine);
+                if (txtSendField.getText().equals("")) {
+                    System.out.println("Пустая строка");
+                }
+                else {
+                    txtField.append("Вы: " + txtSendField.getText() + newLine);
                     txtSendField.setText(null);
                 }
             }
@@ -47,9 +54,12 @@ public class Window extends JFrame{
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Клик");
-                if (txtSendField.getText() != null) {
-                    txtField.setText(txtSendField.getText());
+                if (txtSendField.getText().equals("")) {
+                    System.out.println("Пустая строка");
+                }
+                else {
+                    txtField.append("Вы: " + txtSendField.getText() + newLine);
+                    txtSendField.setText(null);
                 }
             }
         });
