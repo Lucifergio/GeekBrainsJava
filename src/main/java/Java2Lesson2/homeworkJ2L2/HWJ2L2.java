@@ -14,8 +14,8 @@ public class HWJ2L2 {
             }
         }
             //заполняем массив неправильными значениями
-            arrayString[0][1] = null;
-            arrayString[0][2] = "s";
+        arrayString[0][1] = null;
+        arrayString[0][2] = "s";
 
             //Вызываем метод
             arrayMethod(arrayString);
@@ -50,7 +50,7 @@ public class HWJ2L2 {
         }
 
             if (finish == true) {
-                System.out.println("Невозможно подсчитать сумму. Устраните исключения.");
+                System.out.println("Невозможно подсчитать сумму. Устраните ошибки.");
             } else {
                 System.out.println("Сумма элементов массива = " + sum);
             }
