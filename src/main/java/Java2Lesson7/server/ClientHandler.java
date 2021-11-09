@@ -1,5 +1,7 @@
 package Java2Lesson7.server;
 
+import Java2Lesson7.constants.Constants;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -16,7 +18,6 @@ public class ClientHandler {
     private DataInputStream in;
     private DataOutputStream out;
     private String name;
-
 
     public ClientHandler(MyServer server, Socket socket) {
 
@@ -43,26 +44,35 @@ public class ClientHandler {
 
     private void authentication() throws IOException {
         while (true) {
+
             String str = in.readUTF();
             if (str.startsWith(Constants.AUTH_COMMAND)) {
                 String[] tokens = str.split("\\s+");
                 String nick = server.getAuthService().getNickByLoginAndPass(tokens[1], tokens[2]);
 
                 if(nick != null) {
-                    //Авторизовались
-                    name = nick;
-                    sendMessage(Constants.AUTH_OK_COMMAND);
-                    server.broadcastMessage(nick + " вошел в чат");
-                    server.subscribe(this);
-                    return;
 
-                }else {
+                    boolean checkReturn = false;
+                    for (ClientHandler ch : server.getClients()) {
+                        if (ch.getName().equals(nick)){
+                            sendMessage("Такой пользователь уже авторизован.");
+                            checkReturn = true;
+                            continue;
+                        }
+                    }
+                    if (checkReturn == true) {
+                        continue;
+                    }
+                            //Авторизовались
+                            name = nick;
+                            sendMessage(Constants.AUTH_OK_COMMAND);
+                            server.broadcastMessage(nick + " вошел в чат");
+                            server.subscribe(this);
+                            return;
+                    } else {
                     sendMessage("Неверный логин/пароль");
                 }
             }
-
-
-
         }
     }
 
@@ -82,24 +92,14 @@ public class ClientHandler {
 
         while (true) {
 
-                String[] privMessToken;
-                String privName = null;
-                String token = "";
-
                 String messageFromClient = in.readUTF();
+                String[] privMessToken = messageFromClient.split("\\s+");
 
-            if (messageFromClient.startsWith(Constants.PRIVATE_MESSAGE)) {
-                privMessToken = messageFromClient.split("\\s+");
-                token = privMessToken[0];
-                privName = privMessToken[1];
-                System.out.println(privName);
-            }
-
-           if (token.equals(Constants.PRIVATE_MESSAGE)) {
-                   server.privBroadcastMessage("Личное собщение от " + name + ": " + messageFromClient, privName, name);
+           if (privMessToken[0].equals(Constants.PRIVATE_MESSAGE)) {
+               server.privBroadcastMessage("Личное собщение от " + name + ": " + messageFromClient, privMessToken[1], name);
             } else {
-               System.out.println("Сообщение от " + name + " : " + messageFromClient);
-                server.broadcastMessage(name + " " + messageFromClient);
+               System.out.println("Сообщение от " + name + ": " + messageFromClient);
+                server.broadcastMessage(name + ": " + messageFromClient);
             }
 
             if (messageFromClient.equals(Constants.END_COMMAND)) {

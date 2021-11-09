@@ -1,12 +1,9 @@
 package Java2Lesson7.client;
 
 
-import Java2Lesson7.server.Constants;
-
+import Java2Lesson7.constants.Constants;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -14,17 +11,12 @@ import java.net.Socket;
 
 public class Client extends JFrame {
 
-    private final String SERVER_ADDRESS = "localhost";
-    private final int SERVER_PORT = 8089;
-
     private JTextField textField;
     private JTextArea textArea;
 
     private Socket socket;
     private DataInputStream dataInputStream;
     private DataOutputStream dataOutputStream;
-
-
 
     public Client() {
         try {
@@ -37,7 +29,7 @@ public class Client extends JFrame {
     }
 
     private void openConnection () throws IOException {
-        socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
+        socket = new Socket(Constants.SERVER_ADDRESS, Constants.SERVER_PORT);
         dataInputStream = new DataInputStream(socket.getInputStream());
         dataOutputStream = new DataOutputStream(socket.getOutputStream());
 
@@ -109,7 +101,7 @@ public class Client extends JFrame {
     private void prepareUI () {
 
         setBounds(200, 200, 500, 500);
-        setTitle("EchoClient");
+        setTitle("Chat client");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         textArea = new JTextArea();

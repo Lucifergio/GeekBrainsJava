@@ -1,4 +1,4 @@
-package Java2Lesson7.server;
+package Java2Lesson7.constants;
 
 public class Constants {
     /**

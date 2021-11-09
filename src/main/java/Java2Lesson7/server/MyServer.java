@@ -1,5 +1,7 @@
 package Java2Lesson7.server;
 
+import Java2Lesson7.constants.Constants;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -14,6 +16,10 @@ public class MyServer {
 
     public AuthService getAuthService() {
         return authService;
+    }
+
+    public List<ClientHandler> getClients() {
+        return clients;
     }
 
     /**
@@ -57,6 +63,7 @@ public class MyServer {
     }
 
     public synchronized void privBroadcastMessage(String message, String privName, String otpravitel) {
+
         for (ClientHandler cl : clients) {
             if (cl.getName().equals(privName)) {
                 for (ClientHandler cl1 : clients) {
@@ -84,5 +91,7 @@ public class MyServer {
     public synchronized void unsubscribe (ClientHandler client) {
         clients.remove(client);
     }
+
+
 
 }
