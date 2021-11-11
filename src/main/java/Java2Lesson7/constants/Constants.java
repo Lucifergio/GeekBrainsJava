@@ -1,5 +1,7 @@
 package Java2Lesson7.constants;
 
+import java.util.Optional;
+
 public class Constants {
     /**
      * Адрес сервера
@@ -22,4 +24,6 @@ public class Constants {
     public static final String AUTH_OK_COMMAND = "/authok";
 
     public static final String PRIVATE_MESSAGE = "/w";
+
+    public static final String CLIENTS_LIST_COMMAND = "/clients";
 }

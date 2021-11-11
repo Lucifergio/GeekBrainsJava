@@ -17,6 +17,7 @@ public class Client extends JFrame {
     private Socket socket;
     private DataInputStream dataInputStream;
     private DataOutputStream dataOutputStream;
+    private String login;
 
     public Client() {
         try {
@@ -33,9 +34,7 @@ public class Client extends JFrame {
         dataInputStream = new DataInputStream(socket.getInputStream());
         dataOutputStream = new DataOutputStream(socket.getOutputStream());
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
+        new Thread(() -> {
 
                 try {
                     while (true) {
@@ -44,6 +43,11 @@ public class Client extends JFrame {
 
                         if (messageFromServer.equals("/end")) {
                             break;
+                        }else if (messageFromServer.startsWith(Constants.AUTH_OK_COMMAND)) {
+                            String[] tokens = messageFromServer.split("\\s+");
+                            this.login = tokens[1];
+                            textArea.append("Успешно авторизован как: " + login);
+                            textArea.append("\n");
                         }
 
                         textArea.append(messageFromServer);
@@ -58,7 +62,7 @@ public class Client extends JFrame {
                     ex.printStackTrace();
                 }
 
-            }
+
         }).start();
 
     }
@@ -148,5 +152,6 @@ public class Client extends JFrame {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new Client());
     }
+
 
 }

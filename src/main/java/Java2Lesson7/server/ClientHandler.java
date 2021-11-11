@@ -6,6 +6,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Optional;
 
 /**
  * Обработчик для конкретного клиента.
@@ -63,13 +64,14 @@ public class ClientHandler {
                     if (checkReturn == true) {
                         continue;
                     }
-                            //Авторизовались
-                            name = nick;
-                            sendMessage(Constants.AUTH_OK_COMMAND);
-                            server.broadcastMessage(nick + " вошел в чат");
-                            server.subscribe(this);
-                            return;
-                    } else {
+                    //Авторизовались
+                    name = nick;
+                    sendMessage(Constants.AUTH_OK_COMMAND + " " + nick);
+                    server.broadcastMessage(nick + " вошел в чат");
+                    server.broadcastMessage(server.getActiveClients() );
+                    server.subscribe(this);
+                    return;
+                } else {
                     sendMessage("Неверный логин/пароль");
                 }
             }
@@ -92,13 +94,16 @@ public class ClientHandler {
 
         while (true) {
 
-                String messageFromClient = in.readUTF();
-                String[] privMessToken = messageFromClient.split("\\s+");
+            String messageFromClient = in.readUTF();
+            String[] privMessToken = messageFromClient.split("\\s+");
 
-           if (privMessToken[0].equals(Constants.PRIVATE_MESSAGE)) {
-               server.privBroadcastMessage("Личное собщение от " + name + ": " + messageFromClient, privMessToken[1], name);
+            if (messageFromClient.startsWith(Constants.CLIENTS_LIST_COMMAND)) {
+                sendMessage(server.getActiveClients());
+
+            } else if (privMessToken[0].equals(Constants.PRIVATE_MESSAGE)) {
+                server.privBroadcastMessage("Личное собщение от " + name + ": " + messageFromClient, privMessToken[1], name);
             } else {
-               System.out.println("Сообщение от " + name + ": " + messageFromClient);
+                System.out.println("Сообщение от " + name + ": " + messageFromClient);
                 server.broadcastMessage(name + ": " + messageFromClient);
             }
 
