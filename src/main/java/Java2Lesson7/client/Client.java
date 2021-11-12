@@ -20,6 +20,7 @@ public class Client extends JFrame {
     private String login;
 
     public Client() {
+
         try {
             openConnection();
         }catch (IOException e) {
@@ -61,8 +62,6 @@ public class Client extends JFrame {
                 }catch (Exception ex) {
                     ex.printStackTrace();
                 }
-
-
         }).start();
 
     }
