@@ -33,14 +33,6 @@ public class BaseAuthService implements AuthService{
                 .filter(entry -> entry.login.equals(login) && entry.password.equals(pass))
                 .map(entry -> entry.nick)
                 .findFirst();
-       /* for (Entry entry : entries) {
-            if (entry.login.equals(login) && entry.password.equals(pass)){
-                return Optional.of(entry.nick);
-            }
-        }
-        return Optional.empty();
-
-        */
     }
 
     private class Entry {

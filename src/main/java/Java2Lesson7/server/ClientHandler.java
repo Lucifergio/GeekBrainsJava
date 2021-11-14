@@ -76,7 +76,7 @@ public class ClientHandler {
             if (str.startsWith(Constants.AUTH_COMMAND)) {
                 String[] tokens = str.split("\\s+");
                 Optional<String> nick = server.getAuthService().getNickByLoginAndPass(tokens[1], tokens[2]);
-                nick.toString();
+
 
                 if(nick.isPresent()) {
 
@@ -93,13 +93,17 @@ public class ClientHandler {
                     }
                     //Авторизовались
                     name = nick.get();
-                    sendMessage(Constants.AUTH_OK_COMMAND + " " + nick);
-                    server.broadcastMessage(nick + " вошел в чат");
-                    server.broadcastMessage(server.getActiveClients() );
+                    sendMessage(Constants.AUTH_OK_COMMAND + " " + name);
+                    server.broadcastMessage(name + " вошел в чат");
                     server.subscribe(this);
 
+                    //Вывод клиентов находящихся онлайн.
+                    StringBuilder sb = new StringBuilder(server.getActiveClients());
+                    sb.delete(0,Constants.CLIENTS_LIST_COMMAND.length());
+                    server.broadcastMessage("В чате находятся: " + sb.toString());
+
                     //Останавливаем таймер.
-                    System.out.println("Клиент авторизовался как: " + nick + " Таймер остановлен.");
+                    System.out.println("Клиент авторизовался как: " + name + " Таймер остановлен.");
                     timer.cancel();
 
                     return;

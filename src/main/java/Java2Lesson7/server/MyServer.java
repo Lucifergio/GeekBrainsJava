@@ -8,7 +8,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Timer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -62,12 +61,6 @@ public class MyServer {
         }
     }
 
-    public synchronized void timerMethod () {
-        Timer timer = new Timer();
-        long time = 10000L;
-
-    }
-
     public synchronized void broadcastMessage(String message) {
 
         clients.forEach(client -> client.sendMessage(message));
@@ -111,5 +104,4 @@ public class MyServer {
         );
         return sb.toString();
     }
-
 }

@@ -31,9 +31,12 @@ public class Client extends JFrame {
     }
 
     private void openConnection () throws IOException {
+
         socket = new Socket(Constants.SERVER_ADDRESS, Constants.SERVER_PORT);
         dataInputStream = new DataInputStream(socket.getInputStream());
         dataOutputStream = new DataOutputStream(socket.getOutputStream());
+
+
 
         new Thread(() -> {
 
@@ -41,26 +44,31 @@ public class Client extends JFrame {
                     while (true) {
 
                         String messageFromServer = dataInputStream.readUTF();
+                        System.out.println(messageFromServer);
 
-                        if (messageFromServer.equals("/end")) {
+                        if (messageFromServer.startsWith(login + ": " + Constants.END_COMMAND)) {
+                            textField.setEnabled(false);
                             break;
-                        }else if (messageFromServer.startsWith(Constants.AUTH_OK_COMMAND)) {
+                        } else if (messageFromServer.startsWith(Constants.AUTH_OK_COMMAND)) {
                             String[] tokens = messageFromServer.split("\\s+");
                             this.login = tokens[1];
                             textArea.append("Успешно авторизован как: " + login);
                             textArea.append("\n");
                         }
-
+                        System.out.println(messageFromServer);
                         textArea.append(messageFromServer);
                         textArea.append("\n");
                     }
 
                     textArea.append("Соединение разорвано");
                     textField.setEnabled(false);
+                    sendMessage();
+                    System.out.println(login + " разорвал соединение.");
                     closeConnection();
+                    System.exit(1);
 
                 }catch (Exception ex) {
-                    ex.printStackTrace();
+                   ex.printStackTrace();
                 }
         }).start();
 
@@ -71,21 +79,19 @@ public class Client extends JFrame {
             dataOutputStream.close();
 
         }catch (Exception ex) {
-
         }
 
         try {
             dataInputStream.close();
 
         }catch (Exception ex) {
-
         }
 
         try {
             socket.close();
         }catch (Exception ex) {
-
         }
+
     }
 
     private void sendMessage() {
