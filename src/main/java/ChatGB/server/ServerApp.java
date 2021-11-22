@@ -1,4 +1,4 @@
-package Java2Lesson7.server;
+package ChatGB.server;
 
 public class ServerApp {
 

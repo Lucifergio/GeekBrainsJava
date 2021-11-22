@@ -1,7 +1,7 @@
-package Java2Lesson7.client;
+package ChatGB.client;
 
 
-import Java2Lesson7.constants.Constants;
+import ChatGB.constants.Constants;
 import javax.swing.*;
 import java.awt.*;
 import java.io.DataInputStream;
@@ -36,15 +36,12 @@ public class Client extends JFrame {
         dataInputStream = new DataInputStream(socket.getInputStream());
         dataOutputStream = new DataOutputStream(socket.getOutputStream());
 
-
-
         new Thread(() -> {
 
                 try {
                     while (true) {
 
                         String messageFromServer = dataInputStream.readUTF();
-                        System.out.println(messageFromServer);
 
                         if (messageFromServer.startsWith(login + ": " + Constants.END_COMMAND)) {
                             textField.setEnabled(false);
@@ -55,7 +52,6 @@ public class Client extends JFrame {
                             textArea.append("Успешно авторизован как: " + login);
                             textArea.append("\n");
                         }
-                        System.out.println(messageFromServer);
                         textArea.append(messageFromServer);
                         textArea.append("\n");
                     }

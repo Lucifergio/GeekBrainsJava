@@ -1,4 +1,4 @@
-package Java2Lesson7.server;
+package ChatGB.server;
 
 import java.util.Optional;
 
@@ -24,5 +24,5 @@ public interface AuthService {
      * @param pass
      * @return никнейм если найден или null, если такого нет.
      */
-    Optional<String> getNickByLoginAndPass(String login, String pass);
+    String getNickByLoginAndPass(String login, String pass);
 }

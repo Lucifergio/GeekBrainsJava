@@ -1,15 +1,13 @@
-package Java2Lesson7.server;
+package ChatGB.server;
 
-import Java2Lesson7.constants.Constants;
+import ChatGB.constants.Constants;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Логика сервера.
@@ -38,7 +36,7 @@ public class MyServer {
     public MyServer() {
         try (ServerSocket server = new ServerSocket(Constants.SERVER_PORT)) {
 
-            authService = new BaseAuthService();
+            authService = new DbAuthService();
             authService.start();
 
             clients = new ArrayList<>();
