@@ -29,4 +29,6 @@ public class Constants {
 
     public static final String  CHANGE_NICK= "/change";
 
+    public static final String DELETE_MESSAGE = "В чате находятся:";
+
 }

@@ -19,8 +19,8 @@ public class Client extends JFrame {
     private String login;
 
     private File dataMessage;
-    private DataInputStream dis;
-    private DataOutputStream dos;
+    BufferedWriter writer;
+    BufferedReader reader;
 
     public Client() {
 
@@ -39,7 +39,6 @@ public class Client extends JFrame {
         socket = new Socket(Constants.SERVER_ADDRESS, Constants.SERVER_PORT);
         dataInputStream = new DataInputStream(socket.getInputStream());
         dataOutputStream = new DataOutputStream(socket.getOutputStream());
-        AtomicBoolean checkHistroty = new AtomicBoolean(true);
 
 
         new Thread(() -> {
@@ -55,32 +54,21 @@ public class Client extends JFrame {
                         } else if (messageFromServer.startsWith(Constants.AUTH_OK_COMMAND)) {
                             String[] tokens = messageFromServer.split("\\s+");
                             this.login = tokens[1];
-                            textArea.append("Успешно авторизован как: " + login);
-                            textArea.append("\n");
 
                             dataMessage = new File(login + ".txt");
-
                             if (!dataMessage.exists()) {
                                 dataMessage.createNewFile();
                             }
+                            writer = new BufferedWriter(new FileWriter(dataMessage, true));
 
-                            try {
-                                dis = new DataInputStream(new FileInputStream(dataMessage));
-                                dos = new DataOutputStream(new FileOutputStream(dataMessage));
+                            readFile();
 
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-
-                        }
-                        if (dis.available() > 0 && checkHistroty.get()) {
-                            textArea.append("История: ");
-                            textArea.append(dis.readUTF());
-                            checkHistroty.set(false);
+                            textArea.append("Успешно авторизован как: " + login);
+                            textArea.append("\n");
                         }
                         textArea.append(messageFromServer);
                         textArea.append("\n");
-
+                        saveFile(messageFromServer);
                     }
 
                     sendMessage();
@@ -96,11 +84,58 @@ public class Client extends JFrame {
 
     }
 
+    private void readFile () throws IOException {
+        try {
+            String str;
+            byte counterMessage = 0;
+            long counterLine = 0L;
+            reader = new BufferedReader(new FileReader(dataMessage));
 
-    public void closeSaveMessage () throws IOException {
-        dis.close();
-        dos.flush();
-        dos.close();
+            while (true) {
+                if (reader.readLine() != null) {
+                    counterLine++;
+                } else {
+                    System.out.println(counterLine);
+                    reader.close();
+                    break;
+                }
+            }
+
+            reader = new BufferedReader(new FileReader(dataMessage));
+                while ((str = reader.readLine()) != null) {
+                    counterMessage++;
+
+                    if (counterMessage >= counterLine-100 && counterMessage < counterLine) {
+
+                        if (counterMessage == counterLine-100) {
+                            textArea.append("История сообщений: ");
+                            textArea.append("\n");
+                        }
+                        textArea.append(str);
+                        textArea.append("\n");
+                    }
+                }
+                reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void saveFile (String message) {
+        try {
+            if (!message.startsWith(Constants.AUTH_OK_COMMAND) && !message.startsWith(Constants.DELETE_MESSAGE)) {
+                writer.write(message);
+                writer.write("\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void closeSaveMessage () throws IOException {
+        reader.close();
+        writer.flush();
+        writer.close();
     }
 
     private void closeConnection() {
