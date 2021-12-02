@@ -104,13 +104,12 @@ public class DbAuthService implements AuthService{
     }
 
     protected static void nickChange (String newNick, String yourLogin) {
-        String newNickname = "UPDATE users SET nick = "+ newNick +" WHERE login = "+ yourLogin +";";
 
         try (PreparedStatement ps = connection.prepareStatement("UPDATE users SET nick = ? " +
-                "WHERE login = ?;")) {
-           ps.setString(1, newNick);
-           ps.setString(2, yourLogin);
-           ps.executeQuery();
+                "WHERE nick = ?;")) {
+            ps.setString(1, newNick);
+            ps.setString(2, yourLogin);
+            ps.executeUpdate();
 
         }catch (Exception ex) {
             ex.printStackTrace();
