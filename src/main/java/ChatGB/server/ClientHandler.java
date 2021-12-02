@@ -7,9 +7,10 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Обработчик для конкретного клиента.
@@ -31,7 +32,9 @@ public class ClientHandler {
             this.socket = socket;
             this.in = new DataInputStream(socket.getInputStream());
             this.out = new  DataOutputStream(socket.getOutputStream());
-            new Thread(() -> {
+            ExecutorService singleService = Executors.newSingleThreadExecutor();
+
+            singleService.execute(() -> {
                 try {
                     authentication();
                     readMessage();
@@ -45,7 +48,9 @@ public class ClientHandler {
                         System.out.println("Соединение закрыто.");
                     }
                 }
-            }).start();
+            });
+
+            singleService.shutdown();
         }catch (IOException ex) {
             throw new RuntimeException("Проблемы при создании обработчика.");
         }
@@ -76,7 +81,6 @@ public class ClientHandler {
             if (str.startsWith(Constants.AUTH_COMMAND)) {
                 String[] tokens = str.split("\\s+");
                 String nick = server.getAuthService().getNickByLoginAndPass(tokens[1], tokens[2]);
-
 
                 if(nick != null) {
 
@@ -114,9 +118,11 @@ public class ClientHandler {
         }
     }
 
+
     public String getName() {
         return name;
     }
+
 
     public void sendMessage(String message) {
         try {
@@ -125,6 +131,7 @@ public class ClientHandler {
             e.printStackTrace();
         }
     }
+
 
     private void readMessage () throws IOException {
 
@@ -158,6 +165,7 @@ public class ClientHandler {
             }
         }
     }
+
 
     private void closeConnection() throws SocketException {
 
