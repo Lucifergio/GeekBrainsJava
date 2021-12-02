@@ -6,21 +6,23 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Client extends JFrame {
 
     private JTextField textField;
-    private JTextArea textArea;
+    JTextArea textArea;
 
     private Socket socket;
     private DataInputStream dataInputStream;
     private DataOutputStream dataOutputStream;
     private String login;
-
     private File dataMessage;
-    BufferedWriter writer;
-    BufferedReader reader;
+    private BufferedWriter writer;
+    private BufferedReader reader;
+
 
     public Client() {
 
@@ -30,8 +32,6 @@ public class Client extends JFrame {
             e.printStackTrace();
         }
         prepareUI();
-
-
     }
 
     private void openConnection () throws IOException {
@@ -39,9 +39,9 @@ public class Client extends JFrame {
         socket = new Socket(Constants.SERVER_ADDRESS, Constants.SERVER_PORT);
         dataInputStream = new DataInputStream(socket.getInputStream());
         dataOutputStream = new DataOutputStream(socket.getOutputStream());
+        ExecutorService singleService = Executors.newSingleThreadExecutor();
 
-
-        new Thread(() -> {
+        singleService.execute(() -> {
 
                 try {
                     while (true) {
@@ -77,10 +77,20 @@ public class Client extends JFrame {
                     closeConnection();
                     System.exit(1);
 
-                }catch (Exception ex) {
+                }catch (EOFException eofException) {
+                    try {
+                        closeSaveMessage();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    closeConnection();
+                    System.exit(1);
+
+                } catch (Exception ex) {
                    ex.printStackTrace();
                 }
-        }).start();
+        });
+        singleService.shutdown();
 
     }
 
