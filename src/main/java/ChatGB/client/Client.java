@@ -87,25 +87,26 @@ public class Client extends JFrame {
     private void readFile () throws IOException {
         try {
             String str;
-            byte counterMessage = 0;
+            int counterMessage = 0;
             long counterLine = 0L;
+
             reader = new BufferedReader(new FileReader(dataMessage));
 
             while (true) {
                 if (reader.readLine() != null) {
                     counterLine++;
                 } else {
-                    System.out.println(counterLine);
                     reader.close();
                     break;
                 }
             }
 
             reader = new BufferedReader(new FileReader(dataMessage));
+
                 while ((str = reader.readLine()) != null) {
                     counterMessage++;
 
-                    if (counterMessage >= counterLine-100 && counterMessage < counterLine) {
+                    if (counterMessage >= counterLine-100) {
 
                         if (counterMessage == counterLine-100) {
                             textArea.append("История сообщений: ");
