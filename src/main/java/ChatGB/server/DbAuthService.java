@@ -82,7 +82,7 @@ public class DbAuthService implements AuthService{
     @Override
     public String getNickByLoginAndPass(String login, String pass) {
 
-        try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM users WHERE login = ? and pass = ?");){
+        try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM users WHERE login = ? and pass = ?")){
             ps.setString(1,login);
             ps.setString(2,pass);
             ResultSet rs = ps.executeQuery();
@@ -104,13 +104,12 @@ public class DbAuthService implements AuthService{
     }
 
     protected static void nickChange (String newNick, String yourLogin) {
-        String newNickname = "UPDATE users SET nick = "+ newNick +" WHERE login = "+ yourLogin +";";
 
         try (PreparedStatement ps = connection.prepareStatement("UPDATE users SET nick = ? " +
-                "WHERE login = ?;")) {
+                "WHERE nick = ?;")) {
            ps.setString(1, newNick);
            ps.setString(2, yourLogin);
-           ps.executeQuery();
+           ps.executeUpdate();
 
         }catch (Exception ex) {
             ex.printStackTrace();
