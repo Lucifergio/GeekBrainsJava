@@ -14,6 +14,9 @@ public class Client extends JFrame {
 
     private JTextField textField;
     JTextArea textArea;
+    JFrame jFrame;
+    byte counterPopUpAuth;
+    boolean checkReadFile;
 
     private Socket socket;
     private DataInputStream dataInputStream;
@@ -23,15 +26,20 @@ public class Client extends JFrame {
     private BufferedWriter writer;
     private BufferedReader reader;
 
+    /**
+     *  Освновная логика клиента.
+     */
+
 
     public Client() {
 
         try {
             openConnection();
+            popUpAuth();
+            prepareUI();
         }catch (IOException e) {
             e.printStackTrace();
         }
-        prepareUI();
     }
 
     private void openConnection () throws IOException {
@@ -51,24 +59,38 @@ public class Client extends JFrame {
                         if (messageFromServer.startsWith(login + ": " + Constants.END_COMMAND)) {
                             break;
 
+                        } else if (messageFromServer.startsWith("Неверный")) {
+                            JOptionPane.showMessageDialog(jFrame, "Неверный логин или пароль");
+                            popUpAuth();
+                            continue;
+
                         } else if (messageFromServer.startsWith(Constants.AUTH_OK_COMMAND)) {
                             String[] tokens = messageFromServer.split("\\s+");
                             this.login = tokens[1];
+                            JOptionPane.showMessageDialog(jFrame, "Добро пожаловать: " + login);
 
-                            dataMessage = new File(login + ".txt");
-                            if (!dataMessage.exists()) {
-                                dataMessage.createNewFile();
-                            }
-                            writer = new BufferedWriter(new FileWriter(dataMessage, true));
-
-                            readFile();
-
-                            textArea.append("Успешно авторизован как: " + login);
-                            textArea.append("\n");
+                        } else if (messageFromServer.startsWith(login + " сменил ник")) {
+                            String[] newNick = messageFromServer.split("\\s+");
+                            this.login = newNick[5];
                         }
+                        dataMessage = new File(login + ".txt");
+                        if (!dataMessage.exists()) {
+                            dataMessage.createNewFile();
+                        }
+
+                        writer = new BufferedWriter(new FileWriter(dataMessage, true));
+
+                        if (checkReadFile == false) {
+                            checkReadFile = true;
+                            readFile();
+                        }
+
                         textArea.append(messageFromServer);
                         textArea.append("\n");
-                        saveFile(messageFromServer);
+
+                        if (messageFromServer != null) {
+                            saveFile(messageFromServer);
+                        }
                     }
 
                     sendMessage();
@@ -78,6 +100,7 @@ public class Client extends JFrame {
                     System.exit(1);
 
                 }catch (EOFException eofException) {
+
                     try {
                         closeSaveMessage();
                     } catch (IOException e) {
@@ -91,8 +114,12 @@ public class Client extends JFrame {
                 }
         });
         singleService.shutdown();
-
     }
+
+    /**
+     * Работа с файлами.
+     *
+     */
 
     private void readFile () throws IOException {
         try {
@@ -143,6 +170,11 @@ public class Client extends JFrame {
         }
     }
 
+    /**
+     * Закрыть программу
+     * и потоки.
+     */
+
     private void closeSaveMessage () throws IOException {
         reader.close();
         writer.flush();
@@ -169,6 +201,10 @@ public class Client extends JFrame {
 
     }
 
+    /**
+     * Отправка сообщений
+     */
+
     private void sendMessage() {
         if (textField.getText().trim().isEmpty()) {
             return;
@@ -179,6 +215,35 @@ public class Client extends JFrame {
             textField.grabFocus();
         }catch (Exception ex) {
             ex.printStackTrace();
+        }
+    }
+
+    /**
+     * Пользовательский
+     * интерфейс.
+     */
+
+    private void popUpAuth () throws IOException {
+        jFrame = new JFrame();
+
+        while (true) {
+            String getLogin = JOptionPane.showInputDialog(jFrame, "Логин");
+            String getPass = JOptionPane.showInputDialog(jFrame, "Пароль");
+            counterPopUpAuth++;
+
+            if (counterPopUpAuth > 3) {
+                JOptionPane.showMessageDialog(jFrame, "Привышенно кол-во попыток.");
+                closeConnection();
+                System.exit(1);
+            }
+            else if (getLogin == null || getPass == null) {
+                JOptionPane.showMessageDialog(jFrame, "Неверный логин или пароль");
+                continue;
+            }else {
+                dataOutputStream.writeUTF(Constants.AUTH_COMMAND + " " + getLogin + " " + getPass);
+                break;
+            }
+
         }
     }
 
@@ -201,27 +266,6 @@ public class Client extends JFrame {
         panel.add(textField, BorderLayout.CENTER);
 
         add(panel, BorderLayout.SOUTH);
-
-        /**
-         * Панель для ввода логина/пароля.
-         */
-        JPanel loginPanel = new JPanel(new BorderLayout());
-        JTextField loginField = new JTextField();
-        loginPanel.add(loginField, BorderLayout.WEST);
-        loginField.setPreferredSize(new Dimension(200, 25));
-        JTextField passField = new JTextField();
-        loginPanel.add(passField, BorderLayout.CENTER);
-        JButton authButton = new JButton("Авторизация");
-        loginPanel.add(authButton, BorderLayout.EAST);
-        add(loginPanel, BorderLayout.NORTH);
-
-        authButton.addActionListener(e -> {
-            try {
-                dataOutputStream.writeUTF(Constants.AUTH_COMMAND + " " + loginField.getText() + " " + passField.getText());
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        });
 
         button.addActionListener(e -> sendMessage());
 
