@@ -232,7 +232,7 @@ public class Client extends JFrame {
             counterPopUpAuth++;
 
             if (counterPopUpAuth > 3) {
-                JOptionPane.showMessageDialog(jFrame, "Привышенно кол-во попыток.");
+                JOptionPane.showMessageDialog(jFrame, "Превышено количество попыток.");
                 closeConnection();
                 System.exit(1);
             }
