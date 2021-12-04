@@ -73,24 +73,27 @@ public class Client extends JFrame {
                             String[] newNick = messageFromServer.split("\\s+");
                             this.login = newNick[5];
                         }
+                        
+
                         dataMessage = new File(login + ".txt");
                         if (!dataMessage.exists()) {
                             dataMessage.createNewFile();
                         }
 
-                        writer = new BufferedWriter(new FileWriter(dataMessage, true));
 
                         if (checkReadFile == false) {
                             checkReadFile = true;
                             readFile();
+                            writer = new BufferedWriter(new FileWriter(dataMessage, true));
+                        }
+                        if (messageFromServer != null) {
+                            saveFile(messageFromServer);
                         }
 
                         textArea.append(messageFromServer);
                         textArea.append("\n");
 
-                        if (messageFromServer != null) {
-                            saveFile(messageFromServer);
-                        }
+
                     }
 
                     sendMessage();
