@@ -4,10 +4,9 @@ package ChatGB.client;
 import ChatGB.constants.Constants;
 import javax.swing.*;
 import java.awt.*;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Client extends JFrame {
 
@@ -19,6 +18,10 @@ public class Client extends JFrame {
     private DataOutputStream dataOutputStream;
     private String login;
 
+    private File dataMessage;
+    BufferedWriter writer;
+    BufferedReader reader;
+
     public Client() {
 
         try {
@@ -28,6 +31,7 @@ public class Client extends JFrame {
         }
         prepareUI();
 
+
     }
 
     private void openConnection () throws IOException {
@@ -35,6 +39,7 @@ public class Client extends JFrame {
         socket = new Socket(Constants.SERVER_ADDRESS, Constants.SERVER_PORT);
         dataInputStream = new DataInputStream(socket.getInputStream());
         dataOutputStream = new DataOutputStream(socket.getOutputStream());
+
 
         new Thread(() -> {
 
@@ -44,22 +49,31 @@ public class Client extends JFrame {
                         String messageFromServer = dataInputStream.readUTF();
 
                         if (messageFromServer.startsWith(login + ": " + Constants.END_COMMAND)) {
-                            textField.setEnabled(false);
                             break;
+
                         } else if (messageFromServer.startsWith(Constants.AUTH_OK_COMMAND)) {
                             String[] tokens = messageFromServer.split("\\s+");
                             this.login = tokens[1];
+
+                            dataMessage = new File(login + ".txt");
+                            if (!dataMessage.exists()) {
+                                dataMessage.createNewFile();
+                            }
+                            writer = new BufferedWriter(new FileWriter(dataMessage, true));
+
+                            readFile();
+
                             textArea.append("Успешно авторизован как: " + login);
                             textArea.append("\n");
                         }
                         textArea.append(messageFromServer);
                         textArea.append("\n");
+                        saveFile(messageFromServer);
                     }
 
-                    textArea.append("Соединение разорвано");
-                    textField.setEnabled(false);
                     sendMessage();
                     System.out.println(login + " разорвал соединение.");
+                    closeSaveMessage();
                     closeConnection();
                     System.exit(1);
 
@@ -68,6 +82,61 @@ public class Client extends JFrame {
                 }
         }).start();
 
+    }
+
+    private void readFile () throws IOException {
+        try {
+            String str;
+            int counterMessage = 0;
+            long counterLine = 0L;
+
+            reader = new BufferedReader(new FileReader(dataMessage));
+
+            while (true) {
+                if (reader.readLine() != null) {
+                    counterLine++;
+                } else {
+                    reader.close();
+                    break;
+                }
+            }
+
+            reader = new BufferedReader(new FileReader(dataMessage));
+
+                while ((str = reader.readLine()) != null) {
+                    counterMessage++;
+
+                    if (counterMessage >= counterLine-100) {
+
+                        if (counterMessage == counterLine-100) {
+                            textArea.append("История сообщений: ");
+                            textArea.append("\n");
+                        }
+                        textArea.append(str);
+                        textArea.append("\n");
+                    }
+                }
+                reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void saveFile (String message) {
+        try {
+            if (!message.startsWith(Constants.AUTH_OK_COMMAND) && !message.startsWith(Constants.DELETE_MESSAGE)) {
+                writer.write(message);
+                writer.write("\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void closeSaveMessage () throws IOException {
+        reader.close();
+        writer.flush();
+        writer.close();
     }
 
     private void closeConnection() {
@@ -113,6 +182,7 @@ public class Client extends JFrame {
         textArea.setEditable(false);
         textArea.setLineWrap(true);
         add(new JScrollPane(textArea), BorderLayout.CENTER);
+        textArea.getAutoscrolls();
 
         JPanel panel = new JPanel(new BorderLayout());
         JButton button = new JButton("Send");
@@ -152,7 +222,4 @@ public class Client extends JFrame {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new Client());
-    }
-
-
-}
+    }}
