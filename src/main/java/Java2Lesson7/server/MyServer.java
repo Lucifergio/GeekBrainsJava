@@ -7,6 +7,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Логика сервера.
@@ -46,6 +49,7 @@ public class MyServer {
                 System.out.println("Клиент подключился");
                 new ClientHandler(this, socket);
             }
+
 
         }catch (IOException ex) {
             System.out.println("Ошибка в работе сервера.");
@@ -92,6 +96,12 @@ public class MyServer {
         clients.remove(client);
     }
 
-
-
+    public synchronized String getActiveClients() {
+        StringBuilder sb = new StringBuilder(Constants.CLIENTS_LIST_COMMAND).append(" ");
+        sb.append(clients.stream()
+                .map(c -> c.getName())
+                .collect(Collectors.joining(" "))
+        );
+        return sb.toString();
+    }
 }

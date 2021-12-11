@@ -17,8 +17,10 @@ public class Client extends JFrame {
     private Socket socket;
     private DataInputStream dataInputStream;
     private DataOutputStream dataOutputStream;
+    private String login;
 
     public Client() {
+
         try {
             openConnection();
         }catch (IOException e) {
@@ -29,36 +31,45 @@ public class Client extends JFrame {
     }
 
     private void openConnection () throws IOException {
+
         socket = new Socket(Constants.SERVER_ADDRESS, Constants.SERVER_PORT);
         dataInputStream = new DataInputStream(socket.getInputStream());
         dataOutputStream = new DataOutputStream(socket.getOutputStream());
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
+
+
+        new Thread(() -> {
 
                 try {
                     while (true) {
 
                         String messageFromServer = dataInputStream.readUTF();
+                        System.out.println(messageFromServer);
 
-                        if (messageFromServer.equals("/end")) {
+                        if (messageFromServer.startsWith(login + ": " + Constants.END_COMMAND)) {
+                            textField.setEnabled(false);
                             break;
+                        } else if (messageFromServer.startsWith(Constants.AUTH_OK_COMMAND)) {
+                            String[] tokens = messageFromServer.split("\\s+");
+                            this.login = tokens[1];
+                            textArea.append("Успешно авторизован как: " + login);
+                            textArea.append("\n");
                         }
-
+                        System.out.println(messageFromServer);
                         textArea.append(messageFromServer);
                         textArea.append("\n");
                     }
 
                     textArea.append("Соединение разорвано");
                     textField.setEnabled(false);
+                    sendMessage();
+                    System.out.println(login + " разорвал соединение.");
                     closeConnection();
+                    System.exit(1);
 
                 }catch (Exception ex) {
-                    ex.printStackTrace();
+                   ex.printStackTrace();
                 }
-
-            }
         }).start();
 
     }
@@ -68,21 +79,19 @@ public class Client extends JFrame {
             dataOutputStream.close();
 
         }catch (Exception ex) {
-
         }
 
         try {
             dataInputStream.close();
 
         }catch (Exception ex) {
-
         }
 
         try {
             socket.close();
         }catch (Exception ex) {
-
         }
+
     }
 
     private void sendMessage() {
@@ -148,5 +157,6 @@ public class Client extends JFrame {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new Client());
     }
+
 
 }

@@ -6,6 +6,10 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketException;
+import java.util.Optional;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Обработчик для конкретного клиента.
@@ -18,6 +22,7 @@ public class ClientHandler {
     private DataInputStream in;
     private DataOutputStream out;
     private String name;
+    private Timer timer;
 
     public ClientHandler(MyServer server, Socket socket) {
 
@@ -34,7 +39,11 @@ public class ClientHandler {
                 }catch (IOException ex) {
                     ex.printStackTrace();
                 }finally {
-                    closeConnection();
+                    try {
+                        closeConnection();
+                    } catch (SocketException e) {
+                        System.out.println("Соединение закрыто.");
+                    }
                 }
             }).start();
         }catch (IOException ex) {
@@ -42,19 +51,38 @@ public class ClientHandler {
         }
     }
 
+
     private void authentication() throws IOException {
+
+//Таймер для ограничения на подключение.
+        TimerTask task = new TimerTask() {
+            public void run() {
+                System.out.println("У клиента вышло время авторизации. Отключение...");
+                try {
+                    sendMessage("Вышло время авторизации. Соединение закрыто.");
+                    closeConnection();
+                }catch (SocketException ex) {
+                    System.out.println("Вышло время авторизации. Соединение закрыто.");
+                }
+            }
+        };
+        //Запускаем таймер.
+        timer = new Timer();
+        timer.schedule(task, Constants.TIME);
+
         while (true) {
 
             String str = in.readUTF();
             if (str.startsWith(Constants.AUTH_COMMAND)) {
                 String[] tokens = str.split("\\s+");
-                String nick = server.getAuthService().getNickByLoginAndPass(tokens[1], tokens[2]);
+                Optional<String> nick = server.getAuthService().getNickByLoginAndPass(tokens[1], tokens[2]);
 
-                if(nick != null) {
+
+                if(nick.isPresent()) {
 
                     boolean checkReturn = false;
                     for (ClientHandler ch : server.getClients()) {
-                        if (ch.getName().equals(nick)){
+                        if (ch.getName().equals(nick.get())){
                             sendMessage("Такой пользователь уже авторизован.");
                             checkReturn = true;
                             continue;
@@ -63,13 +91,23 @@ public class ClientHandler {
                     if (checkReturn == true) {
                         continue;
                     }
-                            //Авторизовались
-                            name = nick;
-                            sendMessage(Constants.AUTH_OK_COMMAND);
-                            server.broadcastMessage(nick + " вошел в чат");
-                            server.subscribe(this);
-                            return;
-                    } else {
+                    //Авторизовались
+                    name = nick.get();
+                    sendMessage(Constants.AUTH_OK_COMMAND + " " + name);
+                    server.broadcastMessage(name + " вошел в чат");
+                    server.subscribe(this);
+
+                    //Вывод клиентов находящихся онлайн.
+                    StringBuilder sb = new StringBuilder(server.getActiveClients());
+                    sb.delete(0,Constants.CLIENTS_LIST_COMMAND.length());
+                    server.broadcastMessage("В чате находятся: " + sb.toString());
+
+                    //Останавливаем таймер.
+                    System.out.println("Клиент авторизовался как: " + name + " Таймер остановлен.");
+                    timer.cancel();
+
+                    return;
+                } else {
                     sendMessage("Неверный логин/пароль");
                 }
             }
@@ -92,13 +130,16 @@ public class ClientHandler {
 
         while (true) {
 
-                String messageFromClient = in.readUTF();
-                String[] privMessToken = messageFromClient.split("\\s+");
+            String messageFromClient = in.readUTF();
+            String[] privMessToken = messageFromClient.split("\\s+");
 
-           if (privMessToken[0].equals(Constants.PRIVATE_MESSAGE)) {
-               server.privBroadcastMessage("Личное собщение от " + name + ": " + messageFromClient, privMessToken[1], name);
+            if (messageFromClient.startsWith(Constants.CLIENTS_LIST_COMMAND)) {
+                sendMessage(server.getActiveClients());
+
+            } else if (privMessToken[0].equals(Constants.PRIVATE_MESSAGE)) {
+                server.privBroadcastMessage("Личное собщение от " + name + ": " + messageFromClient, privMessToken[1], name);
             } else {
-               System.out.println("Сообщение от " + name + ": " + messageFromClient);
+                System.out.println("Сообщение от " + name + ": " + messageFromClient);
                 server.broadcastMessage(name + ": " + messageFromClient);
             }
 
@@ -108,7 +149,8 @@ public class ClientHandler {
         }
     }
 
-    private void closeConnection() {
+    private void closeConnection() throws SocketException {
+
         server.unsubscribe(this);
         server.broadcastMessage(name + " вышел из чата");
         try {
