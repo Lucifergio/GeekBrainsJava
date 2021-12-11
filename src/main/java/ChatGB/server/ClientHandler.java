@@ -1,6 +1,6 @@
-package Java2Lesson7.server;
+package ChatGB.server;
 
-import Java2Lesson7.constants.Constants;
+import ChatGB.constants.Constants;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -75,14 +75,14 @@ public class ClientHandler {
             String str = in.readUTF();
             if (str.startsWith(Constants.AUTH_COMMAND)) {
                 String[] tokens = str.split("\\s+");
-                Optional<String> nick = server.getAuthService().getNickByLoginAndPass(tokens[1], tokens[2]);
+                String nick = server.getAuthService().getNickByLoginAndPass(tokens[1], tokens[2]);
 
 
-                if(nick.isPresent()) {
+                if(nick != null) {
 
                     boolean checkReturn = false;
                     for (ClientHandler ch : server.getClients()) {
-                        if (ch.getName().equals(nick.get())){
+                        if (ch.getName().equals(nick)){
                             sendMessage("Такой пользователь уже авторизован.");
                             checkReturn = true;
                             continue;
@@ -92,7 +92,7 @@ public class ClientHandler {
                         continue;
                     }
                     //Авторизовались
-                    name = nick.get();
+                    name = nick;
                     sendMessage(Constants.AUTH_OK_COMMAND + " " + name);
                     server.broadcastMessage(name + " вошел в чат");
                     server.subscribe(this);
@@ -136,6 +136,15 @@ public class ClientHandler {
             if (messageFromClient.startsWith(Constants.CLIENTS_LIST_COMMAND)) {
                 sendMessage(server.getActiveClients());
 
+                /**
+                 * Смена ника
+                 */
+
+            }else if (messageFromClient.startsWith(Constants.CHANGE_NICK)) {
+                String[] changeNickArr = messageFromClient.split("\\s+");
+                DbAuthService.nickChange(changeNickArr[1],this.name);
+                server.broadcastMessage(name + " сменил ник, теперь он: " + changeNickArr[1]);
+                name = changeNickArr[1];
             } else if (privMessToken[0].equals(Constants.PRIVATE_MESSAGE)) {
                 server.privBroadcastMessage("Личное собщение от " + name + ": " + messageFromClient, privMessToken[1], name);
             } else {

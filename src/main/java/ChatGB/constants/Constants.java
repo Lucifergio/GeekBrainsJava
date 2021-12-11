@@ -1,6 +1,4 @@
-package Java2Lesson7.constants;
-
-import java.util.Optional;
+package ChatGB.constants;
 
 public class Constants {
     /**
@@ -28,5 +26,7 @@ public class Constants {
     public static final String CLIENTS_LIST_COMMAND = "/clients";
 
     public static final long TIME = 120000l; //120 секунд
+
+    public static final String  CHANGE_NICK= "/change";
 
 }
