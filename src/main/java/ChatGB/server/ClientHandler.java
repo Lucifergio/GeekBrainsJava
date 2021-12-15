@@ -152,7 +152,6 @@ public class ClientHandler {
                 DbAuthService.nickChange(changeNickArr[1],this.name);
                 server.broadcastMessage(name + " сменил ник, теперь он: " + changeNickArr[1]);
                 name = changeNickArr[1];
-
             } else if (privMessToken[0].equals(Constants.PRIVATE_MESSAGE)) {
                 server.privBroadcastMessage("Личное собщение от " + name + ": " + messageFromClient, privMessToken[1], name);
             } else {
