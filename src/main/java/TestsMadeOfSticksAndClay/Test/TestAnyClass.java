@@ -9,8 +9,8 @@ import java.lang.reflect.InvocationTargetException;
 
 public class TestAnyClass {
 
-          AnyClass any;
-   static StartTest startTest;
+    AnyClass any;
+    static StartTest startTest;
 
     public static void main(String[] args) throws InvocationTargetException, IllegalAccessException, InstantiationException, NoSuchMethodException, InterruptedException {
         startTest = new StartTest();
@@ -18,35 +18,35 @@ public class TestAnyClass {
     }
 
     @BeforeSuite
-    public void init () {
+    public void init() {
         any = new AnyClass();
     }
 
     @Test(priority = 10)
-    public void testStringArray () {
-        String[] array = new String[] {"Fail", "b"};
+    public void testStringArray() {
+        String[] array = new String[]{"Fail", "b"};
         startTest.StringArrayEquals(array, any.stringArrayMethod());
     }
 
     @Test(priority = 4)
-    public void testIntArray () {
-        int[] array = new int[] {1,2,3};
+    public void testIntArray() {
+        int[] array = new int[]{1, 2, 3};
         startTest.intArrayEquals(array, any.intArrayMethod());
     }
 
     @Test
-    public void testInt () {
+    public void testInt() {
         startTest.intEquals(5, any.intMethod());
     }
 
     @Test(priority = 2)
-    public void testString () {
+    public void testString() {
         startTest.StringEquals("Hello", any.stringMethod());
     }
 
 
     @AfterSuite
-    public void end () {
+    public void end() {
         System.out.println("Все тесты завершены.");
     }
 }
