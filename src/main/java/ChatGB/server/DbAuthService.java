@@ -107,6 +107,7 @@ public class DbAuthService implements AuthService{
 
         try (PreparedStatement ps = connection.prepareStatement("UPDATE users SET nick = ? " +
                 "WHERE nick = ?;")) {
+     
            ps.setString(1, newNick);
            ps.setString(2, yourLogin);
            ps.executeUpdate();
