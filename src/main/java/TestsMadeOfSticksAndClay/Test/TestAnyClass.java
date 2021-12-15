@@ -1,8 +1,8 @@
 package TestsMadeOfSticksAndClay.Test;
 
-import TestsMadeOfSticksAndClay.Anotation.AfterSuite;
-import TestsMadeOfSticksAndClay.Anotation.BeforeSuite;
-import TestsMadeOfSticksAndClay.Anotation.Test;
+import TestsMadeOfSticksAndClay.Annotation.AfterSuite;
+import TestsMadeOfSticksAndClay.Annotation.BeforeSuite;
+import TestsMadeOfSticksAndClay.Annotation.Test;
 import TestsMadeOfSticksAndClay.MainTestClass.StartTest;
 
 import java.lang.reflect.InvocationTargetException;

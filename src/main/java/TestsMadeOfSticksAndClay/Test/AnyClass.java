@@ -32,6 +32,7 @@ public class AnyClass {
 
     public String stringMethod () {
         return "Hello";
+
     }
 
 }

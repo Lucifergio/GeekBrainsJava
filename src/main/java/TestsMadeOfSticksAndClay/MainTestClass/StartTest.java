@@ -1,14 +1,13 @@
 package TestsMadeOfSticksAndClay.MainTestClass;
 
-import TestsMadeOfSticksAndClay.Anotation.AfterSuite;
-import TestsMadeOfSticksAndClay.Anotation.BeforeSuite;
-import TestsMadeOfSticksAndClay.Anotation.Test;
+import TestsMadeOfSticksAndClay.Annotation.AfterSuite;
+import TestsMadeOfSticksAndClay.Annotation.BeforeSuite;
+import TestsMadeOfSticksAndClay.Annotation.Test;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.stream.Stream;
 
 public class StartTest implements ConfirmationTest {
 

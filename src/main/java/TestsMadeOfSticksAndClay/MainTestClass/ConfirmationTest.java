@@ -9,4 +9,5 @@ public interface ConfirmationTest {
     boolean StringArrayEquals(String[] result, String[] array);
     boolean intEquals (int result, int num);
     boolean StringEquals (String string, String result);
+
 }

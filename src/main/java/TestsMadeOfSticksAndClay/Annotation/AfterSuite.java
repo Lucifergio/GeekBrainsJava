@@ -1,4 +1,4 @@
-package TestsMadeOfSticksAndClay.Anotation;
+package TestsMadeOfSticksAndClay.Annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
