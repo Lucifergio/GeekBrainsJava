@@ -1,6 +1,9 @@
 package ChatGB.server;
 
 import ChatGB.constants.Constants;
+import LessonTestAndLog.LoggerApp;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -14,6 +17,7 @@ import java.util.stream.Collectors;
  */
 
 public class MyServer {
+    Logger logger = LogManager.getLogger(MyServer.class);
 
     public AuthService getAuthService() {
         return authService;
@@ -42,15 +46,15 @@ public class MyServer {
             clients = new ArrayList<>();
 
             while (true) {
-                System.out.println("Сервер ожидает подключения.");
+                logger.info("Сервер ожидает подключения.");
                 Socket socket = server.accept();
-                System.out.println("Клиент подключился");
+                logger.info("Клиент подключился");
                 new ClientHandler(this, socket);
             }
 
 
         }catch (IOException ex) {
-            System.out.println("Ошибка в работе сервера.");
+            logger.error("Ошибка в работе сервера.");
             ex.printStackTrace();
         } finally {
             if (authService != null) {

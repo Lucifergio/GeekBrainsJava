@@ -1,8 +1,13 @@
 package ChatGB.server;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.sql.*;
 
 public class DbAuthService implements AuthService{
+
+    Logger logger = LogManager.getLogger(DbAuthService.class);
 
     private static Connection connection;
     private static Statement statement;
@@ -20,8 +25,7 @@ public class DbAuthService implements AuthService{
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        System.out.println("Подключение к БД");
-
+        logger.info("Подключение к БД");
     }
 
     @Override
@@ -42,8 +46,7 @@ public class DbAuthService implements AuthService{
         }catch (Exception ex) {
             ex.printStackTrace();
         }
-        System.out.println("Отключение от БД");
-
+        logger.info("Отключение от БД");
     }
 
     public static void createTable() throws SQLException {

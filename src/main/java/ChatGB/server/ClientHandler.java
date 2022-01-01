@@ -1,6 +1,9 @@
 package ChatGB.server;
 
 import ChatGB.constants.Constants;
+import LessonTestAndLog.LoggerApp;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -17,6 +20,8 @@ import java.util.concurrent.Executors;
  */
 
 public class ClientHandler {
+
+    Logger logger = LogManager.getLogger(ClientHandler.class);
 
     private MyServer server;
     private Socket socket;
@@ -45,13 +50,14 @@ public class ClientHandler {
                     try {
                         closeConnection();
                     } catch (SocketException e) {
-                        System.out.println("Соединение закрыто.");
+                        logger.info("Соединение закрыто");
                     }
                 }
             });
 
             singleService.shutdown();
         }catch (IOException ex) {
+            logger.error("Проблемы при создании обработчика.");
             throw new RuntimeException("Проблемы при создании обработчика.");
         }
     }
@@ -62,12 +68,12 @@ public class ClientHandler {
 //Таймер для ограничения на подключение.
         TimerTask task = new TimerTask() {
             public void run() {
-                System.out.println("У клиента вышло время авторизации. Отключение...");
+                logger.info("У клиента вышло время авторизации. Отключение.");
                 try {
                     sendMessage("Вышло время авторизации. Соединение закрыто.");
                     closeConnection();
                 }catch (SocketException ex) {
-                    System.out.println("Вышло время авторизации. Соединение закрыто.");
+                    logger.info("Вышло время авторизации клиента. Соединение закрыто.");
                 }
             }
         };
@@ -107,7 +113,7 @@ public class ClientHandler {
                     server.broadcastMessage("В чате находятся: " + sb.toString());
 
                     //Останавливаем таймер.
-                    System.out.println("Клиент авторизовался как: " + name + " Таймер остановлен.");
+                    logger.info("Клиент авторизовался как: " + name + " Таймер остановлен.");
                     timer.cancel();
 
                     return;
